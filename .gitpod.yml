@@ -3,7 +3,29 @@
 # and commit this file to your remote git repository to share the goodness with others.
 
 tasks:
-  - init: yarn install && yarn run build
+  - name: Install fly cli
+    init: curl -L https://fly.io/install.sh | sh
+    command: |
+      alias flyctl="/home/gitpod/.fly/bin/flyctl"
+      /home/gitpod/.fly/bin/flyctl version
+
+  - name: Restore .env file
+    init: cd ./apps/remix-social-app/
+    command: |
+      if [ -f .env ]; then
+        echo "Found .env in workspace"
+      else
+        if [ ! -n "${ENV}" ]; then
+          echo "Setting example .env"
+
+          cp .env.example .env 
+        else
+          echo "Restoring .env from Gitpod"
+
+          echo "${ENV}" | base64 -d | tee .env > /dev/null
+        fi
+      fi
+
+  - name: Run app in dev mode
+    init: yarn install && yarn run build
     command: yarn run dev
-
-
