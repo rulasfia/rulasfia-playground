@@ -18,8 +18,41 @@ const stitches = createStitches({
     lg: "(min-width: 1024px)",
     xl: "(min-width: 1680px)",
   },
+  utils: {
+    mx: (value: string) => ({
+      marginLeft: value,
+      marginRight: value,
+    }),
+    my: (value: string) => ({
+      marginTop: value,
+      marginBottom: value,
+    }),
+    px: (value: string) => ({
+      paddingLeft: value,
+      paddingRight: value,
+    }),
+    py: (value: string) => ({
+      paddingTop: value,
+      paddingBottom: value,
+    }),
+  },
 });
 
 const { styled, globalCss, getCssText, theme } = stitches;
+
+const defaultFonts = "'IBM Plex Sans', sans-serif";
+
+const injectGlobalStyles = stitches.globalCss({
+  "*": { boxSizing: "border-box", fontFamily: defaultFonts },
+  "*:after": { boxSizing: "border-box", fontFamily: defaultFonts },
+  "*:before": { boxSizing: "border-box", fontFamily: defaultFonts },
+  body: { margin: 0, padding: 0 },
+  h1: { margin: 0 },
+  h2: { margin: 0 },
+  h3: { margin: 0 },
+  a: { color: "$gray12", textDecoration: "none" },
+});
+
+injectGlobalStyles();
 
 export { styled, getCssText, globalCss, theme };

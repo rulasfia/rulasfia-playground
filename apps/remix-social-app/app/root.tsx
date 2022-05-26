@@ -1,4 +1,8 @@
-import type { LoaderFunction, MetaFunction } from "@remix-run/node";
+import type {
+  LoaderFunction,
+  MetaFunction,
+  LinksFunction,
+} from "@remix-run/node";
 import * as React from "react";
 import { json } from "@remix-run/node";
 import {
@@ -20,6 +24,25 @@ const Container = styled("div", {
   backgroundColor: "#ff0000",
   padding: "1em",
 });
+
+/** links function for page external <link> tag */
+export const links: LinksFunction = () => {
+  return [
+    {
+      rel: "preconnect",
+      href: "https://fonts.googleapis.com",
+    },
+    {
+      rel: "preconnect",
+      href: "https://fonts.gstatic.com",
+      crossOrigin: "anonymous",
+    },
+    {
+      rel: "stylesheet",
+      href: "https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap",
+    },
+  ];
+};
 
 /** meta function for page global metadata */
 export const meta: MetaFunction = () => ({
