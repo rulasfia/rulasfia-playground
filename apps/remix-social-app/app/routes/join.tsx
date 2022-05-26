@@ -3,9 +3,16 @@ import type {
   LoaderFunction,
   MetaFunction,
 } from "@remix-run/node";
-import { json, redirect } from "@remix-run/node";
-import { Form, Link, useActionData, useSearchParams } from "@remix-run/react";
 import * as React from "react";
+import { json, redirect } from "@remix-run/node";
+import { Form, useActionData, useSearchParams } from "@remix-run/react";
+import { styled, theme } from "~/styles/stitches.config";
+import Box from "~/components/atoms/layouts/Box";
+import Button from "~/components/atoms/Button";
+import LinkTo from "~/components/atoms/LinkTo";
+import FormControl from "~/components/atoms/forms/FormControl";
+import Label from "~/components/atoms/forms/Label";
+import Input from "~/components/atoms/forms/Input";
 
 import { getUserId, createUserSession } from "~/session.server";
 
@@ -18,6 +25,23 @@ export const loader: LoaderFunction = async ({ request }) => {
   return json({});
 };
 
+const Container = styled("main", {
+  position: "relative",
+  minHeight: "calc(100vh - 75px)",
+  background: theme.colors.white,
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  justifyContent: "center",
+});
+
+const Title = styled("h3", {
+  fontSize: "1.25rem",
+  fontWeight: "600",
+  marginBottom: "1rem",
+  color: theme.colors.violet10,
+});
+
 interface ActionData {
   errors: {
     email?: string;
@@ -25,12 +49,14 @@ interface ActionData {
   };
 }
 
+/** forms action function */
 export const action: ActionFunction = async ({ request }) => {
   const formData = await request.formData();
   const email = formData.get("email");
   const password = formData.get("password");
   const redirectTo = safeRedirect(formData.get("redirectTo"), "/");
 
+  /** validate email format */
   if (!validateEmail(email)) {
     return json<ActionData>(
       { errors: { email: "Email is invalid" } },
@@ -38,6 +64,7 @@ export const action: ActionFunction = async ({ request }) => {
     );
   }
 
+  /** validate password format */
   if (typeof password !== "string" || password.length === 0) {
     return json<ActionData>(
       { errors: { password: "Password is required" } },
@@ -45,6 +72,7 @@ export const action: ActionFunction = async ({ request }) => {
     );
   }
 
+  /** validate email length */
   if (password.length < 8) {
     return json<ActionData>(
       { errors: { password: "Password is too short" } },
@@ -52,6 +80,7 @@ export const action: ActionFunction = async ({ request }) => {
     );
   }
 
+  /** check existing user */
   const existingUser = await getUserByEmail(email);
   if (existingUser) {
     return json<ActionData>(
@@ -60,8 +89,10 @@ export const action: ActionFunction = async ({ request }) => {
     );
   }
 
+  /** create new user */
   const user = await createUser(email, password);
 
+  /** create user session */
   return createUserSession({
     request,
     userId: user.id,
@@ -70,6 +101,7 @@ export const action: ActionFunction = async ({ request }) => {
   });
 };
 
+/** meta function for page metadata */
 export const meta: MetaFunction = () => {
   return {
     title: "Sign Up",
@@ -92,18 +124,19 @@ export default function Join() {
   }, [actionData]);
 
   return (
-    <div className="flex min-h-full flex-col justify-center">
-      <div className="mx-auto w-full max-w-md px-8">
-        <Form method="post" className="space-y-6">
-          <div>
-            <label
+    <Container>
+      <Box css={{ mx: "auto", maxWidth: "450px", minWidth: "320px" }}>
+        <Title>Create your free account</Title>
+        <Form method="post">
+          <FormControl>
+            <Label
               htmlFor="email"
               className="block text-sm font-medium text-gray-700"
             >
               Email address
-            </label>
-            <div className="mt-1">
-              <input
+            </Label>
+            <Box>
+              <Input
                 ref={emailRef}
                 id="email"
                 required
@@ -120,18 +153,18 @@ export default function Join() {
                   {actionData.errors.email}
                 </div>
               )}
-            </div>
-          </div>
+            </Box>
+          </FormControl>
 
-          <div>
-            <label
+          <FormControl>
+            <Label
               htmlFor="password"
               className="block text-sm font-medium text-gray-700"
             >
               Password
-            </label>
-            <div className="mt-1">
-              <input
+            </Label>
+            <Box>
+              <Input
                 id="password"
                 ref={passwordRef}
                 name="password"
@@ -146,32 +179,31 @@ export default function Join() {
                   {actionData.errors.password}
                 </div>
               )}
-            </div>
-          </div>
+            </Box>
+          </FormControl>
 
           <input type="hidden" name="redirectTo" value={redirectTo} />
-          <button
-            type="submit"
-            className="w-full rounded bg-blue-500  py-2 px-4 text-white hover:bg-blue-600 focus:bg-blue-400"
-          >
+          <Button type="submit" css={{ width: "100%", marginBottom: "1rem" }}>
             Create Account
-          </button>
+          </Button>
           <div className="flex items-center justify-center">
-            <div className="text-center text-sm text-gray-500">
+            <Box
+              css={{ textAlign: "center", fontSize: "$sm", color: "$gray10" }}
+            >
               Already have an account?{" "}
-              <Link
-                className="text-blue-500 underline"
+              <LinkTo
+                css={{ color: "$violet10", textDecoration: "underline" }}
                 to={{
                   pathname: "/login",
                   search: searchParams.toString(),
                 }}
               >
                 Log in
-              </Link>
-            </div>
+              </LinkTo>
+            </Box>
           </div>
         </Form>
-      </div>
-    </div>
+      </Box>
+    </Container>
   );
 }

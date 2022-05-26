@@ -18,6 +18,7 @@ import {
 import { getUser } from "./session.server";
 import ClientStyleContext from "./styles/client.context";
 import { styled } from "./styles/stitches.config";
+import Navbar from "./components/organisms/Navbar";
 
 /** container component for error & catch boundary */
 const Container = styled("div", {
@@ -105,6 +106,7 @@ const Document = ({ children, title }: DocumentProps) => {
 export default function App() {
   return (
     <Document>
+      <Navbar />
       <Outlet />
     </Document>
   );

@@ -1,11 +1,14 @@
-// import { Link } from "@remix-run/react";
 import { styled, theme } from "~/styles/stitches.config";
+import Button from "~/components/atoms/Button";
+import Box from "~/components/atoms/layouts/Box";
+import ArrowSmRight from "~/components/atoms/icons/ArrowSmRight";
+import LinkTo from "~/components/atoms/LinkTo";
 
 // import { useOptionalUser } from "~/utils";
 
 const Container = styled("main", {
   position: "relative",
-  minHeight: "100vh",
+  minHeight: "calc(100vh - 75px)",
   background: theme.colors.white,
   "@sm": {
     display: "flex",
@@ -14,34 +17,38 @@ const Container = styled("main", {
   },
 });
 
-const Box = styled("div");
-
 const Title = styled("h1", {
   fontSize: "3rem",
   color: theme.colors.violet12,
 });
 
 const Subtitle = styled("h5", {
-  fontSize: "1.25rem",
+  fontSize: theme.fontSizes.lg,
   fontWeight: "500",
   margin: 0,
-  color: theme.colors.gray10,
+  color: theme.colors.gray11,
 });
 
 export default function Index() {
   // const user = useOptionalUser();
   return (
     <Container>
-      <Box
-        css={{
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
+      <Box type="vstack" position="allCenter">
         <Title>Welcome to Remix Social</Title>
         <Subtitle>Created by @rulasfia</Subtitle>
+
+        <Box
+          css={{ my: "2rem", gap: "2rem" }}
+          type="hstack"
+          position="allCenter"
+        >
+          <LinkTo to="/join">
+            <Button type="button" size="lg" withIcon link>
+              Get Started
+              <ArrowSmRight css={{ height: "28px", width: "28px" }} />
+            </Button>
+          </LinkTo>
+        </Box>
       </Box>
     </Container>
   );
