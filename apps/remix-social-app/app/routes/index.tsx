@@ -42,8 +42,17 @@ export default function Index() {
           type="hstack"
           position="allCenter"
         >
-          <LinkTo to="/join">
-            <Button type="button" size="lg" withIcon link>
+          <LinkTo
+            css={{
+              "&:focus-visible": {
+                borderRadius: "12px",
+                outline: "none",
+                boxShadow: `0 0 0 4px ${theme.colors.violet7}`,
+              },
+            }}
+            to="/join"
+          >
+            <Button focus={false} type="button" size="lg" withIcon link>
               Get Started
               <ArrowSmRight css={{ height: "28px", width: "28px" }} />
             </Button>

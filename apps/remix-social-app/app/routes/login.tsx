@@ -3,13 +3,43 @@ import type {
   LoaderFunction,
   MetaFunction,
 } from "@remix-run/node";
-import { json, redirect } from "@remix-run/node";
-import { Form, Link, useActionData, useSearchParams } from "@remix-run/react";
 import * as React from "react";
+import { json, redirect } from "@remix-run/node";
+import { Form, useActionData, useSearchParams } from "@remix-run/react";
+import { CheckIcon } from "@radix-ui/react-icons";
+import { styled, theme } from "~/styles/stitches.config";
+import Box from "~/components/atoms/layouts/Box";
+import Button from "~/components/atoms/Button";
+import LinkTo from "~/components/atoms/LinkTo";
+import FormControl from "~/components/atoms/forms/FormControl";
+import Label from "~/components/atoms/forms/Label";
+import InputText from "~/components/atoms/forms/InputText";
+import InputMessage from "~/components/atoms/forms/InputMessage";
+import {
+  Checkbox,
+  CheckboxIndicator,
+} from "~/components/atoms/forms/InputCheckbox";
 
 import { createUserSession, getUserId } from "~/session.server";
 import { verifyLogin } from "~/models/user.server";
 import { safeRedirect, validateEmail } from "~/utils";
+
+const Container = styled("main", {
+  position: "relative",
+  minHeight: "calc(100vh - 75px)",
+  background: theme.colors.white,
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  justifyContent: "center",
+});
+
+const Title = styled("h3", {
+  fontSize: "1.25rem",
+  fontWeight: "600",
+  marginBottom: "1rem",
+  color: theme.colors.violet10,
+});
 
 export const loader: LoaderFunction = async ({ request }) => {
   const userId = await getUserId(request);
@@ -31,6 +61,7 @@ export const action: ActionFunction = async ({ request }) => {
   const redirectTo = safeRedirect(formData.get("redirectTo"), "/notes");
   const remember = formData.get("remember");
 
+  console.log({ email, password, remember });
   if (!validateEmail(email)) {
     return json<ActionData>(
       { errors: { email: "Email is invalid" } },
@@ -91,18 +122,14 @@ export default function LoginPage() {
   }, [actionData]);
 
   return (
-    <div className="flex min-h-full flex-col justify-center">
-      <div className="mx-auto w-full max-w-md px-8">
-        <Form method="post" className="space-y-6">
-          <div>
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Email address
-            </label>
-            <div className="mt-1">
-              <input
+    <Container>
+      <Box css={{ mx: "auto", maxWidth: "450px", minWidth: "320px" }}>
+        <Title>Login to your existing account</Title>
+        <Form method="post">
+          <FormControl>
+            <Label htmlFor="email">Email address</Label>
+            <Box>
+              <InputText
                 ref={emailRef}
                 id="email"
                 required
@@ -112,25 +139,19 @@ export default function LoginPage() {
                 autoComplete="email"
                 aria-invalid={actionData?.errors?.email ? true : undefined}
                 aria-describedby="email-error"
-                className="w-full rounded border border-gray-500 px-2 py-1 text-lg"
               />
               {actionData?.errors?.email && (
-                <div className="pt-1 text-red-700" id="email-error">
+                <InputMessage id="email-error">
                   {actionData.errors.email}
-                </div>
+                </InputMessage>
               )}
-            </div>
-          </div>
+            </Box>
+          </FormControl>
 
-          <div>
-            <label
-              htmlFor="password"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Password
-            </label>
-            <div className="mt-1">
-              <input
+          <FormControl>
+            <Label htmlFor="password">Password</Label>
+            <Box>
+              <InputText
                 id="password"
                 ref={passwordRef}
                 name="password"
@@ -138,53 +159,52 @@ export default function LoginPage() {
                 autoComplete="current-password"
                 aria-invalid={actionData?.errors?.password ? true : undefined}
                 aria-describedby="password-error"
-                className="w-full rounded border border-gray-500 px-2 py-1 text-lg"
               />
               {actionData?.errors?.password && (
-                <div className="pt-1 text-red-700" id="password-error">
+                <InputMessage id="password-error">
                   {actionData.errors.password}
-                </div>
+                </InputMessage>
               )}
-            </div>
-          </div>
+            </Box>
+          </FormControl>
+
+          <FormControl>
+            <Box
+              type="hstack"
+              css={{ gap: "0.75rem", justifyContent: "start" }}
+            >
+              <Checkbox name="remember" id="remember">
+                <CheckboxIndicator>
+                  <CheckIcon />
+                </CheckboxIndicator>
+              </Checkbox>
+              <Label htmlFor="remember">Remember me</Label>
+            </Box>
+          </FormControl>
 
           <input type="hidden" name="redirectTo" value={redirectTo} />
-          <button
-            type="submit"
-            className="w-full rounded bg-blue-500  py-2 px-4 text-white hover:bg-blue-600 focus:bg-blue-400"
-          >
+          <Button type="submit" css={{ width: "100%", marginBottom: "1rem" }}>
             Log in
-          </button>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <input
-                id="remember"
-                name="remember"
-                type="checkbox"
-                className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-              />
-              <label
-                htmlFor="remember"
-                className="ml-2 block text-sm text-gray-900"
-              >
-                Remember me
-              </label>
-            </div>
-            <div className="text-center text-sm text-gray-500">
+          </Button>
+
+          <Box type="vstack" css={{ gap: "0.5rem", alignItems: "start" }}>
+            <Box
+              css={{ textAlign: "center", fontSize: "$sm", color: "$gray10" }}
+            >
               Don't have an account?{" "}
-              <Link
-                className="text-blue-500 underline"
+              <LinkTo
+                css={{ color: "$violet10", textDecoration: "underline" }}
                 to={{
                   pathname: "/join",
                   search: searchParams.toString(),
                 }}
               >
                 Sign up
-              </Link>
-            </div>
-          </div>
+              </LinkTo>
+            </Box>
+          </Box>
         </Form>
-      </div>
-    </div>
+      </Box>
+    </Container>
   );
 }

@@ -5,14 +5,34 @@ const Button = styled("button", {
   borderWidth: "2px",
   borderColor: "transparent",
   borderStyle: "solid",
-  fontWeight: "500",
   transitionProperty: "all",
   transitionTimingFunction: "cubic-bezier(0.4, 0, 1, 1)",
   transitionDuration: "50ms",
 
   variants: {
+    focus: {
+      true: {
+        "&:focus:not(:focus-visible)": {
+          outline: "none",
+          boxShadow: `0 0 0 1px ${theme.colors.violet7}`,
+        },
+        "&:focus-visible": {
+          outline: "none",
+          boxShadow: `0 0 0 4px ${theme.colors.violet7}`,
+        },
+      },
+      false: {
+        "&:focus:not(:focus-visible)": {
+          outline: "none",
+        },
+        "&:focus-visible": {
+          outline: "none",
+        },
+      },
+    },
     variant: {
       solid: {
+        fontWeight: "500",
         borderColor: theme.colors.violet9,
         backgroundColor: theme.colors.violet9,
         color: theme.colors.white,
@@ -22,6 +42,7 @@ const Button = styled("button", {
         },
       },
       outline: {
+        fontWeight: "500",
         borderColor: theme.colors.violet7,
         backgroundColor: theme.colors.white,
         color: theme.colors.violet11,
@@ -70,6 +91,7 @@ const Button = styled("button", {
   defaultVariants: {
     variant: "solid",
     size: "md",
+    focus: true,
   },
 });
 

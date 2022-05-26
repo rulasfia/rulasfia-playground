@@ -12,18 +12,13 @@ import Button from "~/components/atoms/Button";
 import LinkTo from "~/components/atoms/LinkTo";
 import FormControl from "~/components/atoms/forms/FormControl";
 import Label from "~/components/atoms/forms/Label";
-import Input from "~/components/atoms/forms/Input";
+import InputText from "~/components/atoms/forms/InputText";
+import InputMessage from "~/components/atoms/forms/InputMessage";
 
 import { getUserId, createUserSession } from "~/session.server";
 
 import { createUser, getUserByEmail } from "~/models/user.server";
 import { safeRedirect, validateEmail } from "~/utils";
-
-export const loader: LoaderFunction = async ({ request }) => {
-  const userId = await getUserId(request);
-  if (userId) return redirect("/");
-  return json({});
-};
 
 const Container = styled("main", {
   position: "relative",
@@ -41,6 +36,12 @@ const Title = styled("h3", {
   marginBottom: "1rem",
   color: theme.colors.violet10,
 });
+
+export const loader: LoaderFunction = async ({ request }) => {
+  const userId = await getUserId(request);
+  if (userId) return redirect("/");
+  return json({});
+};
 
 interface ActionData {
   errors: {
@@ -136,7 +137,7 @@ export default function Join() {
               Email address
             </Label>
             <Box>
-              <Input
+              <InputText
                 ref={emailRef}
                 id="email"
                 required
@@ -149,9 +150,9 @@ export default function Join() {
                 className="w-full rounded border border-gray-500 px-2 py-1 text-lg"
               />
               {actionData?.errors?.email && (
-                <div className="pt-1 text-red-700" id="email-error">
+                <InputMessage id="email-error">
                   {actionData.errors.email}
-                </div>
+                </InputMessage>
               )}
             </Box>
           </FormControl>
@@ -164,7 +165,7 @@ export default function Join() {
               Password
             </Label>
             <Box>
-              <Input
+              <InputText
                 id="password"
                 ref={passwordRef}
                 name="password"
@@ -175,9 +176,9 @@ export default function Join() {
                 className="w-full rounded border border-gray-500 px-2 py-1 text-lg"
               />
               {actionData?.errors?.password && (
-                <div className="pt-1 text-red-700" id="password-error">
+                <InputMessage id="password-error">
                   {actionData.errors.password}
-                </div>
+                </InputMessage>
               )}
             </Box>
           </FormControl>
@@ -186,7 +187,7 @@ export default function Join() {
           <Button type="submit" css={{ width: "100%", marginBottom: "1rem" }}>
             Create Account
           </Button>
-          <div className="flex items-center justify-center">
+          <Box type="vstack" css={{ gap: "0.5rem", alignItems: "start" }}>
             <Box
               css={{ textAlign: "center", fontSize: "$sm", color: "$gray10" }}
             >
@@ -201,7 +202,7 @@ export default function Join() {
                 Log in
               </LinkTo>
             </Box>
-          </div>
+          </Box>
         </Form>
       </Box>
     </Container>
