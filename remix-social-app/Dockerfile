@@ -7,13 +7,16 @@ ENV NODE_ENV production
 # Install openssl for Prisma
 RUN apt-get update && apt-get install -y openssl sqlite3
 
+# Install pnpm globally
+RUN npm install -g pnpm
+
 # Install all node_modules, including dev dependencies
 FROM base as deps
 
 WORKDIR /myapp
 
-ADD package.json ../../yarn.lock ./
-RUN npm install --production=false
+ADD package.json pnpm-lock.yaml ./
+RUN pnpm install --prod=false
 
 # Setup production node_modules
 FROM base as production-deps
@@ -21,8 +24,8 @@ FROM base as production-deps
 WORKDIR /myapp
 
 COPY --from=deps /myapp/node_modules /myapp/node_modules
-ADD package.json yarn.lock ./
-RUN npm prune --production
+ADD package.json pnpm-lock.yaml ./
+RUN pnpm prune --prod
 
 # Build the app
 FROM base as build
@@ -35,7 +38,7 @@ ADD prisma .
 RUN npx prisma generate
 
 ADD . .
-RUN npm run build
+RUN pnpm run build
 
 # Finally, build the production image with minimal footprint
 FROM base
@@ -50,10 +53,10 @@ RUN echo "#!/bin/sh\nset -x\nsqlite3 \$DATABASE_URL" > /usr/local/bin/database-c
 WORKDIR /myapp
 
 COPY --from=production-deps /myapp/node_modules /myapp/node_modules
-COPY --from=build /myapp/node_modules/.prisma /myapp/node_modules/.prisma
+# COPY --from=build /myapp/node_modules/.prisma /myapp/node_modules/.prisma
 
 COPY --from=build /myapp/build /myapp/build
 COPY --from=build /myapp/public /myapp/public
 ADD . .
 
-CMD ["npm", "start"]
+CMD ["pnpm", "run", "start"]
