@@ -3,8 +3,9 @@ import { styled, theme } from "~/styles/stitches.config";
 import Button from "~/components/atoms/Button";
 import Box from "~/components/atoms/layouts/Box";
 import ArrowSmRight from "~/components/atoms/icons/ArrowSmRight";
+import LinkTo from "~/components/atoms/LinkTo";
 
-// import { useOptionalUser } from "~/utils";
+import { useOptionalUser } from "~/utils";
 
 const Container = styled("main", {
   position: "relative",
@@ -41,7 +42,7 @@ const LinkButton = styled(Link, {
 });
 
 export default function Index() {
-  // const user = useOptionalUser();
+  const user = useOptionalUser();
   return (
     <Container>
       <Box type="vstack" position="allCenter">
@@ -53,12 +54,24 @@ export default function Index() {
           type="hstack"
           position="allCenter"
         >
-          <LinkButton to="/join">
-            <Button focus={false} type="button" size="lg" withIcon link>
-              Get Started
-              <ArrowSmRight css={{ height: "28px", width: "28px" }} />
-            </Button>
-          </LinkButton>
+          {user?.id ? (
+            <Subtitle>
+              Hello {user.email}. You can access your notes in{" "}
+              <LinkTo
+                css={{ color: "$violet10", textDecoration: "underline" }}
+                to="/notes"
+              >
+                here
+              </LinkTo>
+            </Subtitle>
+          ) : (
+            <LinkButton to="/join">
+              <Button focus={false} type="button" size="lg" withIcon link>
+                Get Started
+                <ArrowSmRight css={{ height: "28px", width: "28px" }} />
+              </Button>
+            </LinkButton>
+          )}
         </Box>
       </Box>
     </Container>

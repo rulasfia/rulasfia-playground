@@ -1,6 +1,6 @@
-# fly.toml file generated for dark-surf-3705 on 2022-05-26T16:56:47Z
+# fly.toml file generated for twilight-wildflower-78 on 2022-05-26T18:00:10Z
 
-app = "dark-surf-3705"
+app = "twilight-wildflower-78"
 
 kill_signal = "SIGINT"
 kill_timeout = 5
