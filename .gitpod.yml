@@ -9,7 +9,7 @@ tasks:
       alias flyctl="/home/gitpod/.fly/bin/flyctl"
       /home/gitpod/.fly/bin/flyctl version
 
-  - name: Restore .env file
+  - name: Restore remix-social .env file
     init: cd ./apps/remix-social-app/
     command: |
       if [ -f .env ]; then
@@ -25,7 +25,3 @@ tasks:
           echo "${ENV}" | base64 -d | tee .env > /dev/null
         fi
       fi
-
-  - name: Run app in dev mode
-    init: yarn install && yarn run build
-    command: yarn run dev

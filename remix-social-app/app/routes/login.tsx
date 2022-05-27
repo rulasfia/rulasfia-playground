@@ -61,7 +61,6 @@ export const action: ActionFunction = async ({ request }) => {
   const redirectTo = safeRedirect(formData.get("redirectTo"), "/notes");
   const remember = formData.get("remember");
 
-  console.log({ email, password, remember });
   if (!validateEmail(email)) {
     return json<ActionData>(
       { errors: { email: "Email is invalid" } },

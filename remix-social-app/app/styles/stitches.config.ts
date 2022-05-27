@@ -21,6 +21,13 @@ const stitches = createStitches({
       md: "1.5rem",
       lg: "1.75rem",
     },
+    sizes: {
+      sm: "640px",
+      md: "768px",
+      lg: "1024px",
+      xl: "1280px",
+      xxl: "1536px",
+    },
   },
   media: {
     sm: "(min-width: 640px)",
