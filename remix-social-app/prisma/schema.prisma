@@ -17,6 +17,8 @@ model User {
 
   password Password?
   notes    Note[]
+  posts    Post[]
+  upvotedPost UpvotedPost[]
 }
 
 model Password {
@@ -36,4 +38,27 @@ model Note {
 
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId String
+}
+
+model Post {
+  id    String @id @default(cuid())
+  title String
+  body  String
+  upvoteCount Int
+  upvoterUser UpvotedPost[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user      User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId String
+}
+
+model UpvotedPost {
+  id    String @id @default(cuid())
+  user  User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  post  Post   @relation(fields: [postId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  
+  userId String
+  postId String
 }
