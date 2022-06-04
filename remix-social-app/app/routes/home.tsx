@@ -14,6 +14,8 @@ import { getPostListItems } from "~/models/post.server";
 import { styled, theme } from "~/styles/stitches.config";
 import Box from "~/components/atoms/layouts/Box";
 import { useOptionalUser } from "~/utils";
+import { getUserUpvotedPostItems } from "~/models/upvotedPost.server";
+import { requireUserId } from "~/session.server";
 
 const Container = styled("main", {
   display: "flex",
@@ -70,22 +72,35 @@ const UpvoteButton = styled(HeartFilledIcon, {
 
 type LoaderData = {
   postListItems: Awaited<ReturnType<typeof getPostListItems>>;
+  userUpvotedPostiItems: Awaited<ReturnType<typeof getUserUpvotedPostItems>>;
 };
 
-export const loader: LoaderFunction = async () => {
+export const loader: LoaderFunction = async ({ request }) => {
+  const userId = await requireUserId(request);
+
   const postListItems = await getPostListItems();
-  return json<LoaderData>({ postListItems });
+  const userUpvotedPostiItems = await getUserUpvotedPostItems(userId);
+  return json<LoaderData>({ postListItems, userUpvotedPostiItems });
 };
 
 export default function HomePage() {
   const data = useLoaderData() as LoaderData;
   const user = useOptionalUser();
 
+  console.log(data);
   const [upvoted, setUpvoted] = React.useState(false);
 
-  const isUserUpvoted = React.useCallback((postId: Post["id"]) => {
-    return false;
-  }, []);
+  const isUserUpvoted = React.useCallback(
+    (postId: Post["id"]) => {
+      const isUpvoted = data.userUpvotedPostiItems.find(
+        (up) => up.postId === postId
+      );
+
+      if (!isUpvoted) return false;
+      return true;
+    },
+    [data.userUpvotedPostiItems]
+  );
 
   return (
     <Container>
@@ -97,15 +112,22 @@ export default function HomePage() {
             <CardBody>{post.body}</CardBody>
             <CardFooter>
               <span>{post.user.email}</span>
-              <UpvoteBox>
-                <Form method="post">
-                  <UpvoteButton onClick={() => setUpvoted((v) => !v)} />
+              <Form method="post">
+                <UpvoteBox>
+                  <UpvoteButton
+                    onClick={() => setUpvoted((v) => !v)}
+                    voted={isUserUpvoted(post.id)}
+                  />
                   {post.upvoteCount}
                   <input type="hidden" name="postId" value={post.id} />
                   <input type="hidden" name="userId" value={user?.id} />
-                  {/* <input type="hidden" name="action" value={} /> */}
-                </Form>
-              </UpvoteBox>
+                  <input
+                    type="hidden"
+                    name="action"
+                    value={String(isUserUpvoted(post.id))}
+                  />
+                </UpvoteBox>
+              </Form>
             </CardFooter>
           </Card>
         ))}
