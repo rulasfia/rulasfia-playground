@@ -1,3 +1,3 @@
 {
-  "conventionalCommits.scopes": ["remix-social"]
+  "conventionalCommits.scopes": ["remix-social", "ionic-react"]
 }
