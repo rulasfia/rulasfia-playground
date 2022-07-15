@@ -3,6 +3,9 @@
 # and commit this file to your remote git repository to share the goodness with others.
 
 tasks:
+  - init: curl -fsSL https://deno.land/install.sh | sh
+    command: deno -v
+
   - name: Install fly cli
     init: curl -L https://fly.io/install.sh | sh
     command: |

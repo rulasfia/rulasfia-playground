@@ -1,3 +1,5 @@
 {
-  "conventionalCommits.scopes": ["remix-social", "ionic-react"]
+  "conventionalCommits.scopes": ["remix-social", "ionic-react"],
+  "deno.enable": true,
+  "deno.unstable": true
 }
