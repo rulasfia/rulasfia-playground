@@ -17,9 +17,7 @@ export const getStaticProps: GetStaticProps = async () => {
 };
 
 const fetcher = (url: string) =>
-  fetch(
-    "https://3000-rulasfia-rulasfiaplaygr-hedquf9fre1.ws-us54.gitpod.io" + url
-  ).then((r) => r.json());
+  fetch("http://localhost:3000" + url).then((r) => r.json());
 
 export default function Home({ user }) {
   const { mutate } = useSWRConfig();
@@ -38,7 +36,7 @@ export default function Home({ user }) {
     console.log("deleted");
   };
 
-  console.log({ user, data });
+  // console.log({ user, data });
   return (
     <div className={styles.container}>
       <Head>
@@ -51,7 +49,7 @@ export default function Home({ user }) {
         <h1>ISR Test</h1>
         <br />
         <button onClick={onDelete} type="button">
-          {isValidating ? "Loading" : "add person"}
+          {isValidating ? "Revalidate..." : "add person"}
         </button>
         <br />
         <pre style={{ width: "90vw" }}>{JSON.stringify(user, null, 4)}</pre>
